@@ -4,19 +4,8 @@
 import Vue from 'vue'
 // 引入 App 组件，它是所有组件的父组件
 import App from './App.vue'
-// 引入混入
-// import mixin from '../mixin/mixin';
-// 引入插件
-// import plugins from './plugins';
-
 // 关闭 Vue 的生产提示
 Vue.config.productionTip = false
-
-// 混入
-// Vue.mixin(mixin);
-
-// 应用(使用)插件
-// Vue.use(plugins, {userData: 'hello plugins!'});
 
 // 创建 Vue 实例对象 -- vm
 new Vue({
