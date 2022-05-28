@@ -13,11 +13,20 @@ export default {
       name: 'Vue'
     };
   },
+  mounted() {
+    // console.log(this.eventBus);
+    this.$bus.$on('sendStudent', (data) => {
+      console.log('School 收到了学生姓名', data);
+    });
+  },
+  beforeDestroy() {
+    this.$bus.$off('sendStudent');
+  },
 }
 </script>
 
 
-<style lang="less">
+<style>
 .demo {
   background-color: gray;
 }

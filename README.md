@@ -117,10 +117,23 @@ new Vue({
 ```
 
 * 使用全局事件总线
-  * 接收数据：```this.$eventBus.$on('eventName', this.method);```
+  * 接收数据（注册，一般在 mounted 里）：```this.$eventBus.$on('eventName', this.method);```
   * 提供数据：```this.$eventBus.$emit('eventName', data);```
-* 注：最 beforeDestroy() 钩子中，用 $off 去解绑 注册事件的组件所注册绑定的事件（不然 eventBus 身上东西会太多）
-* 仅父子传递是不需要用这个的f
+* 注：最好 beforeDestroy() 钩子中，用 $off 去解绑 注册事件的组件所注册绑定的事件（不然 eventBus 身上东西会太多，很累）
+* 仅父子传递是不需要用这个的
+
+## 优秀的组件间通信方式二：消息订阅与发布(不推荐使用)
+
+* 可实现任意间组件间通信
+* 使用第三方库 pubsub-js （使用方法和上方一致)
+
+## nextTick
+
+1. this.$nextTick(回调函数)
+2. 作用：在下一次 DOM 更新结束后执行其指定的回调
+3. 使用场景：当改变数据后，要基于更新后的新 DOM 进行某些操作时，可把操作放在 $nextTick 所指定的回调函数中执行
+
+
 
 
 
