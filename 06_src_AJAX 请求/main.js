@@ -9,11 +9,6 @@ import App from './App.vue'
 // 引入插件
 // import plugins from './plugins';
 
-// 引入 store
-import store from './store'; // 若没有写全地址，默认找 index 文件
-
-
-
 // 关闭 Vue 的生产提示
 Vue.config.productionTip = false;
 
@@ -27,11 +22,10 @@ Vue.config.productionTip = false;
 // Vue.prototype.eventBus = puppet;
 
 // 创建 Vue 实例对象 -- vm
-const vm = new Vue({
+new Vue({
   el: '#app',
   // 将 App 组件放入容器中
   render: h => h(App),  // 等同下方的方法，但由于没有用到 this，写成 箭头函数 更加精简，形参可随便取名
-  store,
   beforeCreate() {
     Vue.prototype.$eventBus = this;
   }
@@ -40,5 +34,3 @@ const vm = new Vue({
   // },
   // components: { App },
 });
-
-console.log('vm', vm);

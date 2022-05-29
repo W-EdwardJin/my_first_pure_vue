@@ -133,9 +133,163 @@ new Vue({
 2. 作用：在下一次 DOM 更新结束后执行其指定的回调
 3. 使用场景：当改变数据后，要基于更新后的新 DOM 进行某些操作时，可把操作放在 $nextTick 所指定的回调函数中执行
 
+## vue 脚手架配置代理
 
+* vue.config.js（里有内置）
 
+## 插槽（slot）
 
+* 默认插槽 ```<slot />```
+* 具名插槽，加 name=""
+* 作用域插槽 ```<slot :games="games"></slot>``` 给外面要使用的地方传数据
+
+## 优秀的组件间通信方式三：Vuex （Vue 里 特别特别特别重要的技术）
+
+### 1. Vuex 是什么
+
+* 专门在 Vue 中实现集中式状态（即数据）管理的一个 Vue 插件，对 Vue 应用中多个组件的共享状态进行集中式的管理（读/写），也是一种组件间通信的方式，且适用于任意组件间通信
+* github: https://github.com/vuejs/vuex
+
+### 2. Vuex 使用场景
+
+* 多组件依赖同一状态（读）
+* 来自不同组件的行为需要变更同一状态（写）
+
+### 3. Vuex 工作原理
+
+![image-20220529154015155](/Users/jinfajun/Library/Application Support/typora-user-images/image-20220529154015155.png)
+
+### 4. 搭建 Vuex 环境
+
+* 创建文件： src/store/index.js
+
+  ```js
+  // 该文件用于创建 Vuex 中最为核心的 store
+  
+  // 引入 Vuex
+  import Vuex from 'vuex';
+  import Vue from 'vue';
+  
+  Vue.use(Vuex);
+  
+  // 准备 actions —— 用于响应组件中的动作
+  const actions = {};
+  
+  // 准备 mutations —— 用于操作数据（state）
+  const mutations = {};
+  
+  // 准备 state —— 用于存储数据
+  const state = {};
+  
+  // 创建并导出 store
+  export default new Vuex.Store({
+    actions,
+    mutations,
+    state,
+  });
+  ```
+
+* 在 main.js 中传入 store 配置项
+
+  ```js
+  // 引入 store
+  import store from './store'; // 若没有写全地址，默认找 index 文件		
+  
+  
+  // 创建 Vue 实例对象 -- vm
+  const vm = new Vue({
+    el: '#app',
+    // 将 App 组件放入容器中
+    render: h => h(App),  // 等同下方的方法，但由于没有用到 this，写成 箭头函数 更加精简，形参可随便取名
+    store,
+    beforeCreate() {
+      Vue.prototype.$eventBus = this;
+    }
+    // render(createElement) {
+    //   return createElement('h1', '你好啊啊啊啊');
+    // },
+    // components: { App },
+  });
+  ```
+
+### 5. 注意
+
+* 如果有  业务逻辑 或 要 ajax 请求，这些都要放在 actions 里面（服务员，有什么业务逻辑，如延迟多少秒执行或是奇数再加，这些都在这里做好）
+* mutations(厨师) 就是做实际的动作（烧菜）: 加、减
+
+### 6. 基本使用
+
+* 初始化数据 state、配置 actions、配置 mutations，操作文件 store/index.js
+
+```js
+// 引入 Vuex
+import Vuex from 'vuex';
+import Vue from 'vue';
+
+Vue.use(Vuex);
+
+// 准备 actions —— 用于响应组件中的动作
+const actions = {
+  // 对于没有额外业务逻辑、ajax 请求的，直接与 mutations 对话
+  // // 加 
+  // increment(context , value) {
+  //   context.commit('INCREMENT', value);
+  // },
+  // // 减
+  // decrement(context, value) {
+  //   context.commit('DECREMENT', value);
+  // },
+  // 奇数加
+  incrementOdd(context, value) {
+    console.log('actions 1 处理了一些事情', value);
+    context.dispatch('actions2', value);
+    // if (context.state.sum % 2) {
+    //   context.commit('INCREMENT', value);
+    // }
+  },
+  actions2(context, value) {
+    console.log('actions 2 处理了一些事情', value);
+    context.dispatch('actions3', value);
+  },
+  actions3(context, value) {
+    console.log('actions 3 处理了一些事情', value);
+    context.commit('INCREMENT', value);
+  },
+  // 等一等加
+  incrementWait(context, value) {
+    setTimeout(() => {
+      context.commit('INCREMENT', value);
+    }, 500);
+  }
+};
+
+// 准备 mutations —— 用于操作数据（state）
+const mutations = {
+  INCREMENT(state, value) {
+    // console.log('mutations 中的方法被执行了', state, value);
+    state.sum += value;
+  },
+  DECREMENT(state, value) {
+    state.sum -= value;
+  },
+};
+
+// 准备 state —— 用于存储数据
+const state = {
+  sum: 0,
+};
+
+// 创建并导出 store
+export default new Vuex.Store({
+  actions,
+  mutations,
+  state,
+});
+```
+
+* 组件中读取 vuex 中的数据：$store.state.sum
+* 组件中修改 vuex 中的数据：$store.dispatch('actions 中的方法名', 数据) 或 ```$store.commit('mutations 中的方法名', 数据)```
+* 若没有网络请求或其他我业务逻辑，组件中也可以越过 actions，即不写 dispatch，直接编写 commit
 
 
 
